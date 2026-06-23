@@ -1,0 +1,84 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { Reveal } from "./Reveal";
+import { eyebrow, section, sectionTitle, shadowSoft, wrap } from "./styles";
+
+const stories = [
+  {
+    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681469/Postpartum_weight_gain_100__normal_️_WATCH_FULLY__._._.__Laparoscopy__Surgeon__Doctor__Pregnancy__Women_MP4_wfpgnl.mp4",
+    caption: "Postpartum weight gain — is it always fat?",
+  },
+  {
+    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/A_lot_of_moms_tell_me_the_same_thing____I_still_look_pregnant..._even_years_after_delivery.___And_many_assume_it_s_just_stubborn_fat.__But_sometimes__the_rea_w2fn73.mp4",
+    caption: '"I still look pregnant... even years after delivery."',
+  },
+  {
+    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/Most_people_think_every_tummy_bulge_is_fat._But_sometimes__it_could_be_something_entirely_different._A_hernia_is_a_weakness_in_the_abdominal_wall_that_allow_gfuapm.mp4",
+    caption: "Not every tummy bulge is fat — it could be a hernia.",
+  },
+];
+
+export function StoriesSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  function handleScroll() {
+    const el = scrollRef.current;
+    if (!el) return;
+    const index = Math.round(el.scrollLeft / (el.scrollWidth / stories.length));
+    setActiveIndex(Math.min(index, stories.length - 1));
+  }
+
+  function goTo(index: number) {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ left: (el.scrollWidth / stories.length) * index, behavior: "smooth" });
+    setActiveIndex(index);
+  }
+
+  return (
+    <section
+      className={`${section} relative isolate overflow-hidden bg-white before:absolute before:left-[-14%] before:top-20 before:-z-10 before:h-[340px] before:w-[340px] before:rounded-full before:bg-mist before:blur-3xl before:content-[''] after:absolute after:bottom-[-18%] after:right-[-10%] after:-z-10 after:h-[420px] after:w-[420px] after:rounded-full after:bg-teal/10 after:blur-3xl after:content-['']`}
+      id="stories"
+    >
+      <div className={wrap}>
+        <Reveal>
+          <span className={eyebrow}>Testimonials</span>
+          <h2 className={sectionTitle}>
+            People who waited too long - and what changed after.
+          </h2>
+          <div className="mt-[34px] grid grid-cols-3 gap-[18px] max-[900px]:mx-auto max-[900px]:max-w-[420px] max-[900px]:grid-cols-1 max-[620px]:flex max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden" ref={scrollRef} onScroll={handleScroll}>
+            {stories.map(({ src }, i) => (
+              <div className={`${shadowSoft} group relative aspect-[9/13] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
+                <video
+                  src={src}
+                  controls
+                  playsInline
+                  className="absolute inset-0 h-full w-full rounded-[inherit] object-cover"
+                />
+                <div className="pointer-events-none absolute left-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold text-white backdrop-blur-sm">
+                  {i + 1}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-[18px] hidden justify-center gap-2.5 max-[620px]:flex">
+            {stories.map((_, i) => (
+              <button
+                key={i}
+                className={`h-2 w-2 cursor-pointer rounded-full border-0 p-0 transition-[background,transform] duration-200 ${
+                  i === activeIndex
+                    ? "scale-[1.4] bg-teal"
+                    : "bg-[rgba(22,48,48,0.12)]"
+                }`}
+                onClick={() => goTo(i)}
+                aria-label={`Go to video ${i + 1}`}
+              />
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
