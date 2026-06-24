@@ -1,9 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
 import SupportNavbar from "@/app/SupportNavbar";
 import Link from "next/link";
 
 export default function ThankYouPage() {
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "SubmitApplication");
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#fbfaf6] text-[#163030]">
       <SupportNavbar />
