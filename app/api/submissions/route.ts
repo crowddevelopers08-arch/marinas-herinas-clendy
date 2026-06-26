@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { isDatabaseConfigured } from '@/lib/database';
+import { prisma } from '@/lib/prisma';
 
 const DATA_DIR   = path.join(process.cwd(), 'data');
 const FILE_PATH  = path.join(DATA_DIR, 'submissions.csv');
@@ -251,6 +254,42 @@ function getTelecrmStatus(result: TelecrmResponse | null) {
   return result.note || `Failed${result.statusCode ? ` (${result.statusCode})` : ''}`;
 }
 
+function toJsonValue(value: unknown): Prisma.InputJsonValue | undefined {
+  if (value === null || value === undefined) return undefined;
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+async function saveSubmissionToDatabase(
+  body: SubmissionBody,
+  telecrmStatus: string,
+  telecrmPayload: TelecrmResponse | null,
+) {
+  if (!isDatabaseConfigured()) return null;
+
+  return prisma.submission.create({
+    data: {
+      source: body.source,
+      firstName: body.firstName,
+      lastName: body.lastName || null,
+      email: body.email || null,
+      phone: body.phone,
+      location: body.location || null,
+      dateKey: body.dateKey || null,
+      appointmentDate: body.appointmentDate || null,
+      appointmentTime: body.appointmentTime || null,
+      symptomType: body.symptomType || null,
+      hadSurgery: body.hadSurgery || null,
+      primaryGoal: body.primaryGoal || null,
+      decisionMaker: body.decisionMaker || null,
+      timeline: body.timeline || null,
+      prevConsult: body.prevConsult || null,
+      pageUrl: body.pageUrl || null,
+      telecrmStatus,
+      telecrmPayload: toJsonValue(telecrmPayload),
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.json();
@@ -268,6 +307,14 @@ export async function POST(req: NextRequest) {
     const telecrmStatus = getTelecrmStatus(telecrmResult);
     const row           = buildRow(body, timestamp, telecrmStatus);
 
+    let databaseId: string | null = null;
+    try {
+      const saved = await saveSubmissionToDatabase(body, telecrmStatus, telecrmResult);
+      databaseId = saved?.id ?? null;
+    } catch (dbErr) {
+      console.warn('Database save skipped:', (dbErr as Error).message);
+    }
+
     try { appendLocalRow(row); }
     catch (csvErr) { console.warn('Local CSV save skipped:', (csvErr as Error).message); }
 
@@ -277,7 +324,7 @@ export async function POST(req: NextRequest) {
     try { await pushToGAS(body, timestamp, telecrmStatus); }
     catch (gasErr) { console.warn('GAS sync skipped:', (gasErr as Error).message); }
 
-    return NextResponse.json({ success: true, telecrm: telecrmResult });
+    return NextResponse.json({ success: true, id: databaseId, telecrm: telecrmResult });
   } catch (err) {
     console.error('Submission error:', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -286,6 +333,43 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
+    if (isDatabaseConfigured()) {
+      try {
+        const submissions = await prisma.submission.findMany({
+          orderBy: { createdAt: 'desc' },
+        });
+
+        const rows = submissions.map((item) => buildRow({
+          source: item.source,
+          firstName: item.firstName,
+          lastName: item.lastName || '',
+          email: item.email || '',
+          phone: item.phone,
+          location: item.location || '',
+          dateKey: item.dateKey || '',
+          appointmentDate: item.appointmentDate || '',
+          appointmentTime: item.appointmentTime || '',
+          symptomType: item.symptomType || '',
+          hadSurgery: item.hadSurgery || '',
+          primaryGoal: item.primaryGoal || '',
+          decisionMaker: item.decisionMaker || '',
+          timeline: item.timeline || '',
+          prevConsult: item.prevConsult || '',
+          pageUrl: item.pageUrl || '',
+        }, item.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), item.telecrmStatus || ''));
+
+        const csv = [rowToCsv(HEADERS), ...rows.map(rowToCsv)].join('\n');
+        return new NextResponse(`${csv}\n`, {
+          headers: {
+            'Content-Type': 'text/csv; charset=utf-8',
+            'Content-Disposition': `attachment; filename="submissions_${Date.now()}.csv"`,
+          },
+        });
+      } catch (dbErr) {
+        console.warn('Database export skipped:', (dbErr as Error).message);
+      }
+    }
+
     ensureCsvFile();
     const buffer = fs.readFileSync(FILE_PATH);
     return new NextResponse(buffer, {

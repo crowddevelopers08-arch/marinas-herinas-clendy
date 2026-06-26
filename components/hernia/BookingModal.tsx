@@ -88,7 +88,6 @@ export function BookingModal() {
   useEffect(() => {
     if (!day || !open) return;
     const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    setSlotsLoading(true);
     fetch(`/api/slots?date=${dateKey}`)
       .then(r => r.json())
       .then(d => setBooked(Array.isArray(d.booked) ? d.booked : []))
@@ -211,7 +210,7 @@ export function BookingModal() {
                   const isSun  = new Date(year, month, d).getDay() === 0;
                   return (
                     <button key={d} disabled={!avail}
-                      onClick={() => { setDay(d); setPending(null); }}
+                      onClick={() => { setDay(d); setPending(null); setSlotsLoading(true); }}
                       className={`relative mx-auto flex h-9 w-9 items-center justify-center rounded-full text-[13.5px] font-medium transition-all max-[620px]:h-8 max-[620px]:w-8 max-[620px]:text-[12.5px]
                         ${sel ? "bg-[#126e6e] font-bold text-white shadow-[0_4px_14px_-4px_rgba(18,110,110,0.5)]" : ""}
                         ${avail && !sel ? "cursor-pointer text-[#126e6e] hover:bg-[#e6f5f5]" : ""}

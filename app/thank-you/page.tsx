@@ -4,10 +4,16 @@ import { useEffect } from "react";
 import SupportNavbar from "@/app/SupportNavbar";
 import Link from "next/link";
 
+declare global {
+  interface Window {
+    fbq?: (event: string, name: string) => void;
+  }
+}
+
 export default function ThankYouPage() {
   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).fbq) {
-      (window as any).fbq("track", "SubmitApplication");
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "SubmitApplication");
     }
   }, []);
 
