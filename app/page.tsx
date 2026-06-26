@@ -1,5 +1,6 @@
 import { BookingModal } from "@/components/hernia/BookingModal";
 import { BenefitsSection } from "@/components/hernia/BenefitsSection";
+import { BeforeAfterImage } from "@/components/hernia/BeforeAfterImage";
 import { BeforeAfterSection } from "@/components/hernia/BeforeAfterSection";
 import { ConsultationSection } from "@/components/hernia/ConsultationSection";
 import { DoctorSection } from "@/components/hernia/DoctorSection";
@@ -23,6 +24,7 @@ export default function Home() {
       <HeroSection />
       <TrustStrip />
       <SymptomCheckSection />
+      <BeforeAfterImage />
       <StoriesSection />
       <MistakeSection />
       <WomenSection />
