@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Reveal } from "./Reveal";
 import { eyebrow, section, sectionTitle, shadowSoft, wrap } from "./styles";
 
@@ -17,11 +17,50 @@ const stories = [
     src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/Most_people_think_every_tummy_bulge_is_fat._But_sometimes__it_could_be_something_entirely_different._A_hernia_is_a_weakness_in_the_abdominal_wall_that_allow_gfuapm.mp4",
     caption: "Not every tummy bulge is fat — it could be a hernia.",
   },
+  {
+    src: "https://ik.imagekit.io/tpucbav8z/marinias1_squished.mp4",
+    caption: "Patient story: hernia care and recovery.",
+  },
+  {
+    src: "https://ik.imagekit.io/tpucbav8z/output%201hernia_squished.mp4",
+    caption: "Hernia treatment journey and results.",
+  },
 ];
+
+function ArrowLeft() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 6 15 12 9 18" />
+    </svg>
+  );
+}
 
 export function StoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  function getVisibleCount() {
+    if (typeof window === "undefined") return 3;
+    if (window.innerWidth < 621) return 1;
+    if (window.innerWidth < 900) return 2;
+    return 3;
+  }
+
+  function getStep() {
+    const el = scrollRef.current;
+    const first = el?.children[0] as HTMLElement | undefined;
+    const second = el?.children[1] as HTMLElement | undefined;
+    if (!first) return 0;
+    return second ? second.offsetLeft - first.offsetLeft : first.offsetWidth;
+  }
 
   function handleScroll() {
     const el = scrollRef.current;
@@ -33,9 +72,44 @@ export function StoriesSection() {
   function goTo(index: number) {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ left: (el.scrollWidth / stories.length) * index, behavior: "smooth" });
-    setActiveIndex(index);
+    const maxIndex = Math.max(0, stories.length - getVisibleCount());
+    const nextIndex = Math.max(0, Math.min(index, maxIndex));
+    el.scrollTo({ left: getStep() * nextIndex, behavior: "smooth" });
+    setActiveIndex(nextIndex);
   }
+
+  function moveStories(direction: "prev" | "next") {
+    const visibleCount = getVisibleCount();
+    const maxIndex = Math.max(0, stories.length - visibleCount);
+    const nextIndex =
+      direction === "next"
+        ? activeIndex >= maxIndex
+          ? 0
+          : activeIndex + 1
+        : activeIndex <= 0
+          ? maxIndex
+          : activeIndex - 1;
+    goTo(nextIndex);
+  }
+
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 620px)").matches) return;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => {
+        const visibleCount = getVisibleCount();
+        const maxIndex = Math.max(0, stories.length - visibleCount);
+        const nextIndex = current >= maxIndex ? 0 : current + 1;
+        scrollRef.current?.scrollTo({
+          left: getStep() * nextIndex,
+          behavior: "smooth",
+        });
+        return nextIndex;
+      });
+    }, 4500);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
     <section
@@ -48,20 +122,36 @@ export function StoriesSection() {
           <h2 className={sectionTitle}>
             People who waited too long - and what changed after.
           </h2>
-          <div className="mt-[34px] grid grid-cols-3 gap-[18px] max-[900px]:mx-auto max-[900px]:max-w-[420px] max-[900px]:grid-cols-1 max-[620px]:flex max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden" ref={scrollRef} onScroll={handleScroll}>
-            {stories.map(({ src }, i) => (
-              <div className={`${shadowSoft} group relative aspect-[9/13] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
-                <video
-                  src={src}
-                  controls
-                  playsInline
-                  className="absolute inset-0 h-full w-full rounded-[inherit] object-cover"
-                />
-                <div className="pointer-events-none absolute left-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold text-white backdrop-blur-sm">
-                  {i + 1}
+          <div className="relative mt-[34px]">
+            <button
+              className="absolute left-0 top-1/2 z-[2] grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
+              onClick={() => moveStories("prev")}
+              aria-label="Previous video"
+            >
+              <ArrowLeft />
+            </button>
+            <div className="flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden" ref={scrollRef} onScroll={handleScroll}>
+              {stories.map(({ src }, i) => (
+                <div className={`${shadowSoft} group relative aspect-[9/13] flex-[0_0_calc((100%_-_36px)/3)] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[900px]:flex-[0_0_calc((100%_-_16px)/2)] max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
+                  <video
+                    src={src}
+                    controls
+                    playsInline
+                    className="absolute inset-0 h-full w-full rounded-[inherit] object-cover"
+                  />
+                  <div className="pointer-events-none absolute left-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold text-white backdrop-blur-sm">
+                    {i + 1}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <button
+              className="absolute right-0 top-1/2 z-[2] grid h-11 w-11 translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
+              onClick={() => moveStories("next")}
+              aria-label="Next video"
+            >
+              <ArrowRight />
+            </button>
           </div>
           <div className="mt-[18px] hidden justify-center gap-2.5 max-[620px]:flex">
             {stories.map((_, i) => (
