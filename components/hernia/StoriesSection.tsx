@@ -17,14 +17,14 @@ const stories = [
     src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/Most_people_think_every_tummy_bulge_is_fat._But_sometimes__it_could_be_something_entirely_different._A_hernia_is_a_weakness_in_the_abdominal_wall_that_allow_gfuapm.mp4",
     caption: "Not every tummy bulge is fat — it could be a hernia.",
   },
-  {
-    src: "https://ik.imagekit.io/tpucbav8z/marinias1_squished.mp4",
-    caption: "Patient story: hernia care and recovery.",
-  },
-  {
-    src: "https://ik.imagekit.io/tpucbav8z/output%201hernia_squished.mp4",
-    caption: "Hernia treatment journey and results.",
-  },
+  // {
+  //   src: "https://ik.imagekit.io/tpucbav8z/marinias1_squished.mp4",
+  //   caption: "Patient story: hernia care and recovery.",
+  // },
+  // {
+  //   src: "https://ik.imagekit.io/tpucbav8z/output%201hernia_squished.mp4",
+  //   caption: "Hernia treatment journey and results.",
+  // },
 ];
 
 function ArrowLeft() {

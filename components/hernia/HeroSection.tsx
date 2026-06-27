@@ -5,7 +5,7 @@ import { CheckIcon } from "./Icons";
 import { button, wrap } from "./styles";
 
 const SYMPTOM_VIDEO =
-  "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/Most_people_think_every_tummy_bulge_is_fat._But_sometimes__it_could_be_something_entirely_different._A_hernia_is_a_weakness_in_the_abdominal_wall_that_allow_gfuapm.mp4";
+  "https://ik.imagekit.io/tpucbav8z/output%201hernia_squished.mp4";
 
 function VideoModal({ onClose }: { onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,6 +58,7 @@ function VideoModal({ onClose }: { onClose: () => void }) {
 
 export function HeroSection() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [heroVideoMuted, setHeroVideoMuted] = useState(true);
 
   return (
     <>
@@ -68,15 +69,24 @@ export function HeroSection() {
         {/* Light gradient base */}
         <div className="absolute inset-0 -z-20 bg-[linear-gradient(105deg,rgba(251,250,246,1)_0%,rgba(251,250,246,0.98)_50%,rgba(231,240,237,0.9)_100%)]" />
 
-        {/* Doctor background image — desktop: right half | mobile: full section background */}
-        <div className="absolute inset-y-0 right-0 -z-10 w-[52%] max-[900px]:inset-x-0 max-[900px]:top-auto max-[900px]:h-[300px] max-[900px]:w-full max-[620px]:inset-0 max-[620px]:h-full max-[620px]:w-full">
-          <img
-            src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/dr-preethi-mrinalini_wmgdmk.webp"
-            alt=""
+        {/* Doctor background video — desktop: right half | mobile: full section background */}
+        <div className="absolute inset-y-0 right-0 z-0 w-[52%] max-[900px]:inset-x-0 max-[900px]:top-auto max-[900px]:h-[300px] max-[900px]:w-full max-[620px]:inset-0 max-[620px]:h-full max-[620px]:w-full">
+          <video
+            src={SYMPTOM_VIDEO}
+            autoPlay
+            muted={heroVideoMuted}
+            loop
+            playsInline
             className="h-full w-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(251,250,246,1)_0%,rgba(251,250,246,0.55)_38%,transparent_70%)] max-[900px]:bg-[linear-gradient(180deg,transparent_20%,rgba(251,250,246,0.7)_70%,rgba(251,250,246,1)_100%)] max-[620px]:bg-[rgba(251,250,246,0.45)]" />
           <div className="absolute inset-0 bg-[radial-gradient(60%_80%_at_80%_20%,rgba(66,200,200,0.14),transparent_70%)]" />
+          <button
+            type="button"
+            aria-label="Unmute hero video"
+            className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0"
+            onClick={() => setHeroVideoMuted(false)}
+          />
         </div>
 
         {/* Decorative coral accent */}
