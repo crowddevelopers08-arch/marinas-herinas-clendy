@@ -118,9 +118,9 @@ export function StoriesSection() {
     >
       <div className={wrap}>
         <Reveal>
-          <span className={eyebrow}>Testimonials</span>
+          <span className={eyebrow}>What Doctor Say</span>
           <h2 className={sectionTitle}>
-            People who waited too long - and what changed after.
+            Stories From Those Who Chose Change.
           </h2>
           <div className="relative mt-[34px]">
             <button
