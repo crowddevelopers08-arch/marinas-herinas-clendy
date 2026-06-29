@@ -18,9 +18,20 @@ export function Footer() {
             </div>
             <small className="block text-[11px] font-medium tracking-[0.04em] text-[#9ecece]">Advanced Laparoscopic &amp; Hernia Surgeon</small>
           </div>
-          <a href="#book" className={button}>
-            Book Consultation
-          </a>
+          <div className="flex max-w-[360px] flex-col items-start gap-3 text-left sm:items-end sm:text-right">
+            <address className="not-italic leading-[1.7] text-[#b5e8e8]">
+              40 &amp; 54, Josier St, Nungambakkam, Chennai 600034
+            </address>
+            <a
+              href="tel:+919884000171"
+              className="font-semibold text-white transition-colors hover:text-[#99e6e6]"
+            >
+              +91 98840 00171
+            </a>
+            <a href="#book" className={`${button} px-[22px] py-[11px] text-sm`}>
+              Book Consultation
+            </a>
+          </div>
         </div>
         <p className="max-w-[80ch] leading-[1.7] text-[#7ab8b8] [&_b]:text-[#b5e8e8]">
           <b>Medical disclaimer:</b> This page is for general information and to

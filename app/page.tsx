@@ -11,6 +11,7 @@ import { Header } from "@/components/hernia/Header";
 import { HeroSection } from "@/components/hernia/HeroSection";
 import { MistakeSection } from "@/components/hernia/MistakeSection";
 import { StickyBar } from "@/components/hernia/StickyBar";
+import { StatsReplicaSection } from "@/components/hernia/StatsReplicaSection";
 import { StoriesSection } from "@/components/hernia/StoriesSection";
 import { SymptomCheckSection } from "@/components/hernia/SymptomCheckSection";
 import { TrustStrip } from "@/components/hernia/TrustStrip";
@@ -23,6 +24,7 @@ export default function Home() {
       <Header />
       <HeroSection />
       <TrustStrip />
+      <StatsReplicaSection />
       <SymptomCheckSection />
       <BeforeAfterImage />
       <StoriesSection />
