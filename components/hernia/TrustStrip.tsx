@@ -4,7 +4,7 @@ const items = [
   ["Laparoscopic", "& minimally invasive"],
   ["Faster", "recovery focus"],
   ["Women's", "diastasis recti care"],
-  ["Second", "opinions welcome"],
+  // ["Second", "opinions welcome"],
 ];
 
 export function TrustStrip() {
