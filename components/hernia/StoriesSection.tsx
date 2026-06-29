@@ -5,10 +5,10 @@ import { Reveal } from "./Reveal";
 import { eyebrow, section, sectionTitle, shadowSoft, wrap } from "./styles";
 
 const stories = [
-  {
-    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681469/Postpartum_weight_gain_100__normal_️_WATCH_FULLY__._._.__Laparoscopy__Surgeon__Doctor__Pregnancy__Women_MP4_wfpgnl.mp4",
-    caption: "Postpartum weight gain — is it always fat?",
-  },
+  // {
+  //   src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681469/Postpartum_weight_gain_100__normal_️_WATCH_FULLY__._._.__Laparoscopy__Surgeon__Doctor__Pregnancy__Women_MP4_wfpgnl.mp4",
+  //   caption: "Postpartum weight gain — is it always fat?",
+  // },
   {
     src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/A_lot_of_moms_tell_me_the_same_thing____I_still_look_pregnant..._even_years_after_delivery.___And_many_assume_it_s_just_stubborn_fat.__But_sometimes__the_rea_w2fn73.mp4",
     caption: '"I still look pregnant... even years after delivery."',
@@ -46,6 +46,8 @@ function ArrowRight() {
 export function StoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const shouldCenterStories = stories.length < 3;
+  const showStoryArrows = stories.length > 2;
 
   function getVisibleCount() {
     if (typeof window === "undefined") return 3;
@@ -123,14 +125,16 @@ export function StoriesSection() {
             Stories From Those Who Chose Change.
           </h2>
           <div className="relative mt-[34px]">
-            <button
-              className="absolute left-0 top-1/2 z-[2] grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
-              onClick={() => moveStories("prev")}
-              aria-label="Previous video"
-            >
-              <ArrowLeft />
-            </button>
-            <div className="flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden" ref={scrollRef} onScroll={handleScroll}>
+            {showStoryArrows && (
+              <button
+                className="absolute left-0 top-1/2 z-[2] grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
+                onClick={() => moveStories("prev")}
+                aria-label="Previous video"
+              >
+                <ArrowLeft />
+              </button>
+            )}
+            <div className={`flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden ${shouldCenterStories ? "min-[621px]:justify-center" : ""}`} ref={scrollRef} onScroll={handleScroll}>
               {stories.map(({ src }, i) => (
                 <div className={`${shadowSoft} group relative aspect-[9/13] flex-[0_0_calc((100%_-_36px)/3)] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[900px]:flex-[0_0_calc((100%_-_16px)/2)] max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
                   <video
@@ -145,13 +149,15 @@ export function StoriesSection() {
                 </div>
               ))}
             </div>
-            <button
-              className="absolute right-0 top-1/2 z-[2] grid h-11 w-11 translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
-              onClick={() => moveStories("next")}
-              aria-label="Next video"
-            >
-              <ArrowRight />
-            </button>
+            {showStoryArrows && (
+              <button
+                className="absolute right-0 top-1/2 z-[2] grid h-11 w-11 translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-[rgba(22,48,48,0.12)] bg-white text-teal-deep shadow-[0_12px_30px_rgba(22,48,48,0.14)] transition-colors hover:border-teal hover:bg-mist max-[620px]:hidden"
+                onClick={() => moveStories("next")}
+                aria-label="Next video"
+              >
+                <ArrowRight />
+              </button>
+            )}
           </div>
           <div className="mt-[18px] hidden justify-center gap-2.5 max-[620px]:flex">
             {stories.map((_, i) => (

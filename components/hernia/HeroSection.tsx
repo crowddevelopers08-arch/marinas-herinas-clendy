@@ -62,9 +62,26 @@ function VideoModal({ onClose }: { onClose: () => void }) {
 export function HeroSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [paused, setPaused] = useState(false);
   const [tick, setTick] = useState(0);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const bgIndex = tick % BG_IMAGES.length;
+
+  const toggleHeroVideo = () => {
+    const video = heroVideoRef.current;
+
+    if (!video) return;
+
+    if (video.paused) {
+      void video.play();
+      setPaused(false);
+      return;
+    }
+
+    video.pause();
+    setPaused(true);
+  };
 
   useEffect(() => {
     const t = setInterval(() => setTick(n => n + 1), 5500);
@@ -166,26 +183,45 @@ export function HeroSection() {
               style={{ aspectRatio: "16/9" }}
             >
               <video
+                ref={heroVideoRef}
                 src={SYMPTOM_VIDEO}
                 autoPlay
                 muted={muted}
                 loop
                 playsInline
                 className="absolute inset-0 h-full w-full object-cover"
+                onPlay={() => setPaused(false)}
+                onPause={() => setPaused(true)}
               />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(13,31,31,0.18)_0%,transparent_30%)]" />
               <button
                 type="button"
-                aria-label="Unmute video"
-                onClick={() => setMuted(false)}
+                aria-label={paused ? "Play video" : "Pause video"}
+                onClick={toggleHeroVideo}
                 className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0"
               />
-              {muted && (
-                <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+              <button
+                type="button"
+                aria-label={muted ? "Unmute video" : "Mute video"}
+                onClick={() => setMuted((current) => !current)}
+                className="absolute bottom-3 right-3 z-10 flex cursor-pointer items-center gap-1.5 rounded-full border-0 bg-black/40 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/55"
+              >
+                {muted ? (
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
                   </svg>
-                  Tap to unmute
+                ) : (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                    <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+                  </svg>
+                )}
+                {muted ? "" : ""}
+              </button>
+              {paused && (
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                  {/* Paused */}
                 </div>
               )}
             </div>

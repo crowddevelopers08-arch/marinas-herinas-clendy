@@ -15,7 +15,6 @@ import {
 
 const symptoms = [
   "A visible bulge in your abdomen or groin",
-  "Pain while lifting heavy objects",
   "Discomfort while coughing or sneezing",
   "A feeling of heaviness or pressure in your stomach",
   "Swelling that appears standing, disappears lying down",
@@ -113,7 +112,7 @@ export function SymptomCheckSection() {
               <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-white/10" />
               <div className="pointer-events-none absolute -bottom-20 left-8 h-44 w-44 rounded-full bg-teal/30 blur-2xl" />
 
-              <div className="sticky top-[90px] text-center max-[900px]:static">
+              <div className="sticky top-[0px] text-center max-[900px]:static">
                 <div className="mx-auto grid h-[150px] w-[150px] place-items-center rounded-full border border-white/15 bg-white/10 shadow-[inset_0_0_34px_rgba(255,255,255,0.08)] max-[620px]:h-[128px] max-[620px]:w-[128px]">
                   <div className="font-display text-[60px] font-semibold leading-none max-[620px]:text-5xl">
                     <span>{selected.length}</span>
