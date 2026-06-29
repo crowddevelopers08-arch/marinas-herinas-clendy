@@ -14,7 +14,7 @@ const signs = [
 const image = (
   <div className="overflow-hidden p-6 text-center text-sm font-semibold leading-normal text-[#a98778] max-[620px]:p-[19px]">
     <img
-      src="/herina.png"
+      src="https://res.cloudinary.com/dxntva1vn/image/upload/v1782744669/hernia_ygipmq.png"
       alt="Women patient"
       className="block h-full w-full rounded-[inherit] object-cover object-center"
     />
