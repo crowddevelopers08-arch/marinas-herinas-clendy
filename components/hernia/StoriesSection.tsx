@@ -45,9 +45,15 @@ function ArrowRight() {
 
 export function StoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const storyVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mobileStoryPlaying, setMobileStoryPlaying] = useState(false);
   const shouldCenterStories = stories.length < 3;
   const showStoryArrows = stories.length > 2;
+
+  function isMobileStoriesScreen() {
+    return typeof window !== "undefined" && window.matchMedia("(max-width: 620px)").matches;
+  }
 
   function getVisibleCount() {
     if (typeof window === "undefined") return 3;
@@ -67,6 +73,7 @@ export function StoriesSection() {
   function handleScroll() {
     const el = scrollRef.current;
     if (!el) return;
+    if (isMobileStoriesScreen() && mobileStoryPlaying) return;
     const index = Math.round(el.scrollLeft / (el.scrollWidth / stories.length));
     setActiveIndex(Math.min(index, stories.length - 1));
   }
@@ -74,10 +81,27 @@ export function StoriesSection() {
   function goTo(index: number) {
     const el = scrollRef.current;
     if (!el) return;
+    if (isMobileStoriesScreen() && mobileStoryPlaying) return;
     const maxIndex = Math.max(0, stories.length - getVisibleCount());
     const nextIndex = Math.max(0, Math.min(index, maxIndex));
     el.scrollTo({ left: getStep() * nextIndex, behavior: "smooth" });
     setActiveIndex(nextIndex);
+  }
+
+  function handleStoryPlay(index: number) {
+    if (!isMobileStoriesScreen()) return;
+
+    storyVideoRefs.current.forEach((video, videoIndex) => {
+      if (video && videoIndex !== index) video.pause();
+    });
+
+    setActiveIndex(index);
+    setMobileStoryPlaying(true);
+  }
+
+  function handleStoryStop() {
+    if (!isMobileStoriesScreen()) return;
+    setMobileStoryPlaying(false);
   }
 
   function moveStories(direction: "prev" | "next") {
@@ -99,6 +123,8 @@ export function StoriesSection() {
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => {
+        if (isMobileStoriesScreen() && mobileStoryPlaying) return current;
+
         const visibleCount = getVisibleCount();
         const maxIndex = Math.max(0, stories.length - visibleCount);
         const nextIndex = current >= maxIndex ? 0 : current + 1;
@@ -111,7 +137,7 @@ export function StoriesSection() {
     }, 4500);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [mobileStoryPlaying]);
 
   return (
     <section
@@ -134,14 +160,20 @@ export function StoriesSection() {
                 <ArrowLeft />
               </button>
             )}
-            <div className={`flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 max-[620px]:overflow-x-auto max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden ${shouldCenterStories ? "min-[621px]:justify-center" : ""}`} ref={scrollRef} onScroll={handleScroll}>
+            <div className={`flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 ${mobileStoryPlaying ? "max-[620px]:overflow-hidden" : "max-[620px]:overflow-x-auto"} max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden ${shouldCenterStories ? "min-[621px]:justify-center" : ""}`} ref={scrollRef} onScroll={handleScroll}>
               {stories.map(({ src }, i) => (
                 <div className={`${shadowSoft} group relative aspect-[9/13] flex-[0_0_calc((100%_-_36px)/3)] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[900px]:flex-[0_0_calc((100%_-_16px)/2)] max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
                   <video
+                    ref={(video) => {
+                      storyVideoRefs.current[i] = video;
+                    }}
                     src={src}
                     controls
                     playsInline
                     className="absolute inset-0 h-full w-full rounded-[inherit] object-cover"
+                    onPlay={() => handleStoryPlay(i)}
+                    onPause={handleStoryStop}
+                    onEnded={handleStoryStop}
                   />
                   <div className="pointer-events-none absolute left-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold text-white backdrop-blur-sm">
                     {i + 1}
