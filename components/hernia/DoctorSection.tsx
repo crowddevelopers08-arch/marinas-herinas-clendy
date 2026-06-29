@@ -47,7 +47,7 @@ export function DoctorSection() {
               </div>
             </div>
 
-            {/* <div className="relative mx-auto w-full max-w-[420px] lg:mr-0">
+            <div className="relative mx-auto w-full max-w-[420px] lg:mr-0">
               <div className="absolute inset-4 rounded-[34px]  max-[620px]:inset-3" />
               <div
                 className={`${shadowCard} relative overflow-hidden rounded-[34px] border border-white/15 bg-white/10 p-3`}
@@ -60,7 +60,7 @@ export function DoctorSection() {
                   />
                 </div>
               </div>
-              <div className="relative mt-4 grid grid-cols-3 gap-2.5 max-[620px]:grid-cols-1">
+              {/* <div className="relative mt-4 grid grid-cols-3 gap-2.5 max-[620px]:grid-cols-1">
                 <StatCounter
                   value={2000}
                   suffix="+"
@@ -79,8 +79,8 @@ export function DoctorSection() {
                     Laparoscopic focus
                   </div>
                 </div>
-              </div>
-            </div> */}
+              </div> */}
+            </div>
           </div>
         </Reveal>
       </div>
