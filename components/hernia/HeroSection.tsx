@@ -83,18 +83,27 @@ export function HeroSection() {
     setPaused(true);
   };
 
-  // React does not sync the `muted` prop to the DOM property on <video> —
-  // iOS Safari reads the property, not the attribute, so autoplay is blocked.
+  // iOS Safari reads video.muted DOM *property*, not the HTML attribute.
+  // React only sets the attribute, so we drive muted imperatively.
   useEffect(() => {
     if (heroVideoRef.current) heroVideoRef.current.muted = muted;
   }, [muted]);
 
-  // Kick off autoplay after mount so iOS picks up the already-muted state.
   useEffect(() => {
     const video = heroVideoRef.current;
     if (!video) return;
-    video.muted = true;
-    void video.play().catch(() => {});
+
+    video.muted = true; // must be set before play() for iOS autoplay policy
+
+    const tryPlay = () => void video.play().catch(() => {});
+
+    // If enough data is already buffered, play immediately; otherwise wait.
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.addEventListener("loadeddata", tryPlay, { once: true });
+      return () => video.removeEventListener("loadeddata", tryPlay);
+    }
   }, []);
 
   useEffect(() => {
@@ -200,9 +209,9 @@ export function HeroSection() {
                 ref={heroVideoRef}
                 src={SYMPTOM_VIDEO}
                 autoPlay
-                muted={muted}
                 loop
                 playsInline
+                preload="auto"
                 className="absolute inset-0 h-full w-full object-cover"
                 onPlay={() => setPaused(false)}
                 onPause={() => setPaused(true)}
