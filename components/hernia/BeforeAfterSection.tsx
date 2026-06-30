@@ -43,7 +43,7 @@ export function BeforeAfterSection() {
               </ul>
             </div>
 
-            <div className="absolute left-1/2 top-1/2 z-[2] grid h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-coral text-white shadow-[0_8px_22px_-8px_rgba(209,66,36,0.7)] max-[620px]:bottom-[-34px] max-[620px]:top-auto">
+            <div className="absolute left-1/2 top-1/2 z-[2] grid h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-coral text-white shadow-[0_8px_22px_-8px_rgba(209,66,36,0.7)] max-[620px]:hidden">
               <ArrowIcon />
             </div>
 

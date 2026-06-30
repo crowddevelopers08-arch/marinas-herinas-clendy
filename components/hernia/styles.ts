@@ -1,6 +1,6 @@
 export const wrap = "mx-auto max-w-[1080px] px-5.5 max-[620px]:px-4";
 
-export const section = "py-[72px] max-[620px]:py-11";
+export const section = "py-[52px] max-[620px]:py-11";
 
 export const eyebrow =
   "mb-4 inline-flex items-center gap-2 font-body text-xs font-bold uppercase tracking-[0.16em] text-teal-deep before:block before:h-[1.5px] before:w-[22px] before:bg-coral";

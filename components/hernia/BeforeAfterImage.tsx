@@ -6,10 +6,10 @@ import { Reveal } from "./Reveal";
 import { eyebrow, section, sectionTitle, shadowCard, wrap } from "./styles";
 
 const beforeAfterImages = [
-  {
-    src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1782739290/Before_hqlodd.png",
-    alt: "Hernia care before and after image 1",
-  },
+  // {
+  //   src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1782739290/Before_hqlodd.png",
+  //   alt: "Hernia care before and after image 1",
+  // },
   // {
   //   src: "https://res.cloudinary.com/dthj7fakc/image/upload/v1782466686/herina-image1_xan4cv.png",
   //   alt: "Hernia care before and after image 2",
@@ -43,10 +43,10 @@ export function BeforeAfterImage() {
             </p>
           </div>
 
-          <div className="mt-9 grid grid-cols-3 gap-5 max-[760px]:hidden">
+          <div className="mt-9 flex justify-center gap-5 max-[760px]:hidden">
             {beforeAfterImages.map((image, index) => (
               <div
-                className={`${shadowCard} overflow-hidden rounded-[20px] border border-white/80 bg-white p-2.5`}
+                className={`${shadowCard} w-full max-w-[360px] overflow-hidden rounded-[20px] border border-white/80 bg-white p-2.5`}
                 key={image.src}
               >
                 <div className="relative aspect-[5/5] overflow-hidden rounded-[14px] bg-mist">

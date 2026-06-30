@@ -62,7 +62,7 @@ function ArrowRight() {
 
 function BenefitCard({ benefit }: { benefit: (typeof benefits)[number] }) {
   return (
-    <div className={`${shadowSoft} ben rounded-[18px] border border-[rgba(22,48,48,0.12)] bg-white px-6 py-[26px] transition-[transform,box-shadow] duration-200 hover:-translate-y-1 max-[620px]:px-[18px] max-[620px]:py-5`}>
+    <div className={`${shadowSoft} ben rounded-[18px] border border-[rgba(22,48,48,0.12)] bg-white px-6 py-[16px] transition-[transform,box-shadow] duration-200 hover:-translate-y-1 max-[620px]:px-[18px] max-[620px]:py-5`}>
       <div className="mb-4 grid h-[46px] w-[46px] place-items-center rounded-[13px] bg-mist text-teal-deep">
         {benefit.icon}
       </div>
