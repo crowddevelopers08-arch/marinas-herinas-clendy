@@ -68,7 +68,7 @@ function VideoModal({ onClose }: { onClose: () => void }) {
 export function HeroSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const [muted, setMuted] = useState(true);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
   const [tick, setTick] = useState(0);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -270,10 +270,15 @@ export function HeroSection() {
               </button>
 
               {paused && (
-                <div className="pointer-events-none absolute left-1/2 top-1/2 z-[4] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
+                <div className="pointer-events-none absolute inset-0 z-[4] flex flex-col items-center justify-center gap-3">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 shadow-[0_0_0_8px_rgba(255,255,255,0.1)] backdrop-blur-sm">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                  <span className="rounded-full bg-black/40 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                    Tap to play
+                  </span>
                 </div>
               )}
             </div>
