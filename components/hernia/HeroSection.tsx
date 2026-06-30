@@ -5,9 +5,7 @@ import { CheckIcon } from "./Icons";
 import { button, wrap } from "./styles";
 
 const SYMPTOM_VIDEO =
-  "https://ik.imagekit.io/tpucbav8z/output%201hernia_squished.mp4";
-
-const VIDEO_POSTER = "https://ik.imagekit.io/tpucbav8z/images1.jpg";
+  "https://res.cloudinary.com/daclbrdse/video/upload/v1782801995/output_1hernia_squished_vmlaw3.mp4";
 
 const BG_IMAGES = [
   "https://ik.imagekit.io/tpucbav8z/images1.jpg",
@@ -35,7 +33,6 @@ function VideoModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
     >
       <button
-        type="button"
         className="flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[13px] font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
         onClick={onClose}
         aria-label="Close"
@@ -49,17 +46,14 @@ function VideoModal({ onClose }: { onClose: () => void }) {
         className="w-full max-w-[520px] overflow-hidden rounded-2xl shadow-[0_40px_100px_-20px_rgba(10,40,40,0.9)]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Same pattern as StoriesSection — controls + playsInline, user-initiated */}
         <video
           ref={videoRef}
+          src={SYMPTOM_VIDEO}
           controls
+          autoPlay
           playsInline
-          preload="metadata"
-          poster={VIDEO_POSTER}
-          className="block max-h-[calc(90vh-80px)] w-full bg-black object-contain"
-        >
-          <source src={SYMPTOM_VIDEO} type="video/mp4" />
-        </video>
+          className="block max-h-[calc(90vh-80px)] w-full object-contain"
+        />
       </div>
     </div>
   );
@@ -68,51 +62,20 @@ function VideoModal({ onClose }: { onClose: () => void }) {
 export function HeroSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const [muted, setMuted] = useState(true);
-  const [paused, setPaused] = useState(true);
+  const [paused, setPaused] = useState(false);
   const [tick, setTick] = useState(0);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const bgIndex = tick % BG_IMAGES.length;
 
-  useEffect(() => {
-    const t = setInterval(() => setTick((n) => n + 1), 5500);
-    return () => clearInterval(t);
-  }, []);
-
-  // Same ref-callback pattern as StoriesSection — set webkit-playsinline imperatively
-  useEffect(() => {
+  const toggleHeroVideo = () => {
     const video = heroVideoRef.current;
-    if (!video) return;
 
-    // StoriesSection pattern: setAttribute directly on DOM node
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
-
-    // Autoplay needs muted DOM property (not just React attribute)
-    video.muted = true;
-    video.defaultMuted = true;
-
-    void video.play().catch(() => setPaused(true));
-  }, []);
-
-  // Keep muted DOM property in sync with state (React only sets the attribute, not the property)
-  useEffect(() => {
-    const video = heroVideoRef.current;
-    if (!video) return;
-    video.muted = muted;
-  }, [muted]);
-
-  const toggleHeroVideo = async () => {
-    const video = heroVideoRef.current;
     if (!video) return;
 
     if (video.paused) {
-      try {
-        await video.play();
-        setPaused(false);
-      } catch {
-        setPaused(true);
-      }
+      void video.play();
+      setPaused(false);
       return;
     }
 
@@ -120,13 +83,18 @@ export function HeroSection() {
     setPaused(true);
   };
 
+  useEffect(() => {
+    const t = setInterval(() => setTick(n => n + 1), 5500);
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <>
       <section
         className="relative isolate overflow-hidden py-5 max-[900px]:py-5 max-[620px]:py-10"
         id="hero"
       >
-        {/* Background slideshow */}
+        {/* ── Background slideshow ── */}
         <div className="absolute inset-0 -z-20 overflow-hidden">
           {BG_IMAGES.map((src, i) => (
             <div
@@ -139,24 +107,28 @@ export function HeroSection() {
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${src})`,
-                  animation:
-                    i === bgIndex
-                      ? `${tick % 2 === 0 ? "kenburns-in" : "kenburns-out"} 6s ease-in-out forwards`
-                      : "none",
+                  animation: i === bgIndex
+                    ? `${tick % 2 === 0 ? "kenburns-in" : "kenburns-out"} 6s ease-in-out forwards`
+                    : "none",
                 }}
               />
             </div>
           ))}
+          {/* Light paper overlay — keeps dark text readable */}
           <div className="absolute inset-0 bg-[rgba(251,250,246,0.82)]" />
+          {/* Subtle teal tint right side */}
           <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(251,250,246,0.15)_0%,rgba(18,110,110,0.06)_100%)]" />
         </div>
 
         <div className={`${wrap} grid grid-cols-2 items-center gap-14 max-[900px]:grid-cols-1 max-[900px]:gap-5`}>
 
-          {/* Left Content */}
+          {/* ── Left text wrapper ──
+              Desktop : flex column (badge+h1 on top, para+CTAs+trust below)
+              Mobile  : display:contents → children become direct grid items
+                        so we can reorder them with CSS order              */}
           <div className="flex flex-col items-start max-[900px]:contents">
 
-            {/* Badge + Headline */}
+            {/* ① Badge + Headline — mobile order 1 */}
             <div className="flex flex-col items-start max-[900px]:order-1 max-[900px]:w-full">
               <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[rgba(66,200,200,0.18)] bg-white px-4 py-2 text-[12.5px] font-bold tracking-[0.04em] text-teal-deep shadow-[0_8px_24px_-16px_rgba(18,110,110,0.5)] max-[620px]:mb-4 max-[620px]:text-[11.5px]">
                 <span className="h-2 w-2 animate-[pulse-dot_2s_infinite] rounded-full bg-coral" />
@@ -168,7 +140,7 @@ export function HeroSection() {
               </h1>
             </div>
 
-            {/* Description + CTAs + Trust */}
+            {/* ③ Description + CTAs + Trust — mobile order 3 */}
             <div className="flex flex-col items-start max-[900px]:order-3 max-[900px]:w-full max-[900px]:pt-3">
               <p className="mb-8 max-w-[46ch] text-[clamp(14.5px,1.05vw,16.5px)] leading-[1.75] text-ink-soft max-[620px]:mb-6 max-[620px]:text-[14.5px]">
                 The bulge, the heaviness, the pull when you lift or cough — most
@@ -182,7 +154,6 @@ export function HeroSection() {
                   Book My Consultation
                 </a>
                 <button
-                  type="button"
                   className="inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full border border-[rgba(18,110,110,0.2)] bg-transparent px-6 py-[15px] text-base font-bold text-teal-deep transition-all duration-200 hover:-translate-y-0.5 hover:border-[#126e6e] hover:bg-[#f0fafa] active:translate-y-0 max-[620px]:w-full max-[620px]:py-3 max-[620px]:text-sm"
                   onClick={() => setModalOpen(true)}
                 >
@@ -205,60 +176,39 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Hero Video — ref callback pattern same as StoriesSection */}
+          {/* ── ② Video — mobile order 2 (appears between title and description) ── */}
           <div className="w-full max-[900px]:order-2">
             <div
               className="relative overflow-hidden rounded-2xl bg-[#0d1f1f] shadow-[0_32px_80px_-24px_rgba(10,40,40,0.55)] ring-1 ring-white/10"
               style={{ aspectRatio: "16/9" }}
             >
               <video
-                ref={(el) => {
-                  heroVideoRef.current = el;
-                  if (!el) return;
-                  // Set attributes directly on the DOM node at creation time
-                  // (same approach StoriesSection uses — before React touches anything)
-                  el.setAttribute("playsinline", "");
-                  el.setAttribute("webkit-playsinline", "");
-                  el.muted = true;
-                  el.defaultMuted = true;
-                }}
+                ref={heroVideoRef}
+                src={SYMPTOM_VIDEO}
                 autoPlay
-                muted
+                muted={muted}
                 loop
                 playsInline
-                preload="metadata"
-                poster={VIDEO_POSTER}
                 className="absolute inset-0 h-full w-full object-cover"
                 onPlay={() => setPaused(false)}
                 onPause={() => setPaused(true)}
-                onLoadedMetadata={() => {
-                  const video = heroVideoRef.current;
-                  if (!video) return;
-                  video.muted = true;
-                  void video.play().catch(() => setPaused(true));
-                }}
-              >
-                <source src={SYMPTOM_VIDEO} type="video/mp4" />
-              </video>
-
+              />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(13,31,31,0.18)_0%,transparent_30%)]" />
-
               <button
                 type="button"
                 aria-label={paused ? "Play video" : "Pause video"}
                 onClick={toggleHeroVideo}
-                className="absolute inset-0 z-[2] cursor-pointer border-0 bg-transparent p-0"
+                className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0"
               />
-
               <button
                 type="button"
                 aria-label={muted ? "Unmute video" : "Mute video"}
-                onClick={() => setMuted((c) => !c)}
-                className="absolute bottom-3 right-3 z-[3] flex cursor-pointer items-center gap-1.5 rounded-full border-0 bg-black/40 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/55"
+                onClick={() => setMuted((current) => !current)}
+                className="absolute bottom-3 right-3 z-10 flex cursor-pointer items-center gap-1.5 rounded-full border-0 bg-black/40 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/55"
               >
                 {muted ? (
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6" />
+                    <path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
                   </svg>
                 ) : (
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -267,25 +217,17 @@ export function HeroSection() {
                     <path d="M18.5 5.5a9 9 0 0 1 0 13" />
                   </svg>
                 )}
+                {muted ? "" : ""}
               </button>
-
               {paused && (
-                <div className="pointer-events-none absolute inset-0 z-[4] flex flex-col items-center justify-center gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 shadow-[0_0_0_8px_rgba(255,255,255,0.1)] backdrop-blur-sm">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                  <span className="rounded-full bg-black/40 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                    Tap to play
-                  </span>
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                  {/* Paused */}
                 </div>
               )}
             </div>
-
             <div className="mt-3 flex items-center gap-2 text-[12.5px] text-ink-soft">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#42c8c8" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
+                <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
               </svg>
               <span>2 min · Understanding your hernia — a quick watch before you decide</span>
             </div>
