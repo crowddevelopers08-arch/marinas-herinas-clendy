@@ -18,21 +18,6 @@ const MONTHS = [
   "December",
 ];
 
-const MONTHS_S = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 // Monday - Saturday only
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -45,8 +30,6 @@ const DAY_NAMES = [
   "Saturday",
 ];
 
-const DAY_S = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 // Available appointment slots: 4:30 PM - 7:00 PM
 // (Last appointment ends at 7:00 PM)
 const TIMES = [
@@ -57,14 +40,6 @@ const TIMES = [
   "6:30 pm",
 ];
 
-const END_TIME: Record<string, string> = {
-  "4:30 pm": "5:00 pm",
-  "5:00 pm": "5:30 pm",
-  "5:30 pm": "6:00 pm",
-  "6:00 pm": "6:30 pm",
-  "6:30 pm": "7:00 pm",
-};
-
 function firstWeekday(year: number, month: number) {
   const d = new Date(year, month, 1).getDay();
   return d === 0 ? 6 : d - 1;
@@ -73,7 +48,7 @@ function daysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
 }
 
-type Step = "calendar" | "form" | "success";
+type Step = "form" | "calendar";
 
 const inputCls = "w-full rounded-lg border border-[#d1dbe8] bg-white px-3.5 py-2.5 text-[14px] text-[#1a2332] outline-none transition placeholder:text-[#b0bec5] focus:border-[#42c8c8] focus:shadow-[0_0_0_2px_rgba(66,200,200,0.2)]";
 const labelCls = "mb-1.5 block text-[13.5px] font-semibold text-[#1a2332]";
@@ -114,26 +89,22 @@ export function BookingModal() {
   const [year, setYear]       = useState(now.getFullYear());
   const [month, setMonth]     = useState(now.getMonth());
   const [day, setDay]         = useState<number | null>(null);
-  const [time, setTime]       = useState<string | null>(null);
   const [pending, setPending]       = useState<string | null>(null);
-  const [step, setStep]             = useState<Step>("calendar");
+  const [step, setStep]             = useState<Step>("form");
   const [bookedSlots, setBooked]    = useState<string[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
   const [form, setForm] = useState({ firstName:"", lastName:"", email:"", phone:"", location:"" });
   const [symptomType, setSymptomType] = useState("");
   const [hadSurgery,  setHadSurgery]  = useState("");
-  const [primaryGoal, setPrimaryGoal] = useState("");
-  const [decisionMaker, setDecision]  = useState("");
-  const [timeline,    setTimeline]    = useState("");
   const [prevConsult, setPrevConsult] = useState("");
 
   function resetAll() {
-    setDay(null); setTime(null); setPending(null); setStep("calendar");
+    setDay(null); setPending(null); setStep("form");
     setForm({ firstName:"", lastName:"", email:"", phone:"", location:"" });
-    setSymptomType(""); setHadSurgery(""); setPrimaryGoal("");
-    setDecision(""); setTimeline(""); setPrevConsult("");
+    setSymptomType(""); setHadSurgery(""); setPrevConsult("");
     setBooked([]); setSlotsLoading(false);
+    setSubmitError(""); setSubmitting(false);
   }
 
   useEffect(() => {
@@ -173,12 +144,12 @@ export function BookingModal() {
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
     else setMonth(m => m - 1);
-    setDay(null); setTime(null); setPending(null); setStep("calendar");
+    setDay(null); setPending(null);
   }
   function nextMonth() {
     if (month === 11) { setMonth(0); setYear(y => y + 1); }
     else setMonth(m => m + 1);
-    setDay(null); setTime(null); setPending(null); setStep("calendar");
+    setDay(null); setPending(null);
   }
 
   function isAvailable(d: number) {
@@ -192,9 +163,39 @@ export function BookingModal() {
 
   const selDateObj = day ? new Date(year, month, day) : null;
   const selDayName = selDateObj ? DAY_NAMES[selDateObj.getDay()] : "";
-  const selDayS    = selDateObj ? DAY_S[selDateObj.getDay()] : "";
   const blanks     = firstWeekday(year, month);
   const total      = daysInMonth(year, month);
+
+  async function confirmBooking(selectedTime: string) {
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source:          "Hernia-Booking",
+          firstName:       form.firstName,
+          lastName:        form.lastName,
+          email:           form.email,
+          phone:           form.phone,
+          location:        form.location,
+          dateKey:         `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+          appointmentDate: `${selDayName}, ${MONTHS[month]} ${day}, ${year}`,
+          appointmentTime: selectedTime,
+          symptomType,
+          hadSurgery,
+          prevConsult,
+          pageUrl:         window.location.href,
+        }),
+      });
+      if (!res.ok) throw new Error("Submission failed");
+      router.push("/thank-you");
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+      setSubmitting(false);
+    }
+  }
 
   if (!open) return null;
 
@@ -214,7 +215,9 @@ export function BookingModal() {
           </div>
           <div className="flex-1">
             <p className="text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#42c8c8] max-[620px]:text-[9.5px]">Hernia Consultation</p>
-            <p className="text-[15px] font-semibold text-white max-[620px]:text-[13px]">Pick a time that works for you.</p>
+            <p className="text-[15px] font-semibold text-white max-[620px]:text-[13px]">
+              {step === "form" ? "Tell us a bit about yourself." : "Pick a time that works for you."}
+            </p>
           </div>
           <button onClick={() => setOpen(false)} aria-label="Close"
             className="grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border border-white/10 bg-white/8 text-[#aaa] transition hover:bg-white/15 hover:text-white max-[620px]:h-8 max-[620px]:w-8">
@@ -224,12 +227,155 @@ export function BookingModal() {
           </button>
         </div>
 
-        {/* ── Calendar view ── */}
+        {/* ── Form view (step 1) ── */}
+        {step === "form" && (
+          <div className="flex flex-1 overflow-hidden bg-white max-[620px]:flex-col max-[620px]:overflow-y-auto">
+
+            {/* Desktop left panel */}
+            <div className="flex w-[320px] flex-none flex-col overflow-y-auto border-r border-[#eef2f2] p-8 max-[620px]:hidden">
+              <img
+                src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/Marina-logo_v7lcbn.png"
+                alt="Marina's"
+                className="mb-6 h-14 w-auto object-contain object-left"
+              />
+              <p className="mb-1 text-[12px] font-semibold text-[#7a9898]">Marina&apos;s Hospitals</p>
+              <p className="mb-5 text-[17px] font-bold leading-snug text-[#0f1f2e]">
+                Hernia Consultation<br/>with Dr. Preethi Mrinalini
+              </p>
+              <div className="flex flex-col gap-3.5 text-[13px] text-[#444]">
+                <div className="flex items-start gap-3">
+                  <svg className="mt-0.5 flex-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a9898" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  <span>30 min</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg className="mt-0.5 flex-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a9898" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <span className="font-semibold text-[#1a2332]">India Standard Time</span>
+                </div>
+              </div>
+              <p className="mt-5 text-[12px] leading-relaxed text-[#9ab8b8]">
+                This consultation will help us understand your hernia symptoms, review your reports, and walk you through your treatment options. You&apos;ll pick a convenient date and time next.
+              </p>
+            </div>
+
+            {/* Right — scrollable form */}
+            <div className="flex flex-1 flex-col overflow-y-auto p-10 max-[620px]:p-4">
+              {/* Logo — mobile only, shown at top of form */}
+              <img
+                src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/Marina-logo_v7lcbn.png"
+                alt="Marina's"
+                className="mb-4 hidden h-14 w-auto object-contain object-left max-[620px]:block"
+              />
+              <p className="mb-5 text-[22px] font-bold text-[#0f1f2e] max-[620px]:mb-4 max-[620px]:text-[18px]">Enter Details</p>
+              <form className="flex flex-col gap-5 pb-4 max-[620px]:gap-4" onSubmit={(e) => {
+                  e.preventDefault();
+                  setStep("calendar");
+                }}>
+
+                {/* First + Last — stacks on mobile */}
+                <div className="grid grid-cols-2 gap-3 max-[620px]:grid-cols-1">
+                  <div>
+                    <label className={labelCls}>First name <span className="text-red-400">*</span></label>
+                    <input required value={form.firstName}
+                      onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Last name <span className="text-red-400">*</span></label>
+                    <input required value={form.lastName}
+                      onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Email <span className="text-red-400">*</span></label>
+                  <input required type="email" value={form.email}
+                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                    className={inputCls} />
+                </div>
+
+                <div>
+                  <label className={labelCls}>Phone Number <span className="text-red-400">*</span></label>
+                  <div className="flex overflow-hidden rounded-lg border border-[#d1dbe8] bg-white transition focus-within:border-[#42c8c8] focus-within:shadow-[0_0_0_2px_rgba(66,200,200,0.2)]">
+                    <div className="flex items-center gap-2 border-r border-[#d1dbe8] px-3 text-[14px] text-[#444]">
+                      <span>🇮🇳</span>
+                      <span className="font-medium">+91</span>
+                    </div>
+                    <input required type="tel" value={form.phone}
+                      onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                      className="flex-1 bg-transparent px-3 py-2.5 text-[14px] text-[#1a2332] outline-none" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Where are you located? <span className="text-red-400">*</span></label>
+                  <input required placeholder="City, State" value={form.location}
+                    onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
+                    className={inputCls} />
+                </div>
+
+                <hr className="border-[#eef2f2]" />
+
+                <RadioGroup
+                  label="What type of hernia symptom do you have?"
+                  required value={symptomType} onChange={setSymptomType}
+                  options={[
+                    "Abdominal bulge or lump",
+                    "Groin pain or swelling",
+                    "Post-pregnancy bulge (diastasis recti)",
+                    "Post-surgery concern",
+                    "Not sure — need evaluation",
+                  ]}
+                />
+
+                <RadioGroup
+                  label="Have you been advised surgery before?"
+                  required value={hadSurgery} onChange={setHadSurgery}
+                  options={[
+                    "Yes — I want a second opinion",
+                    "No — this is my first consultation",
+                    "Currently evaluating options",
+                  ]}
+                />
+
+                <RadioGroup
+                  label="Have you consulted another doctor for this before?"
+                  required value={prevConsult} onChange={setPrevConsult}
+                  options={[
+                    "Yes — looking for specialist opinion",
+                    "No — this is my first consultation",
+                    "Yes — but reports were inconclusive",
+                  ]}
+                />
+
+                <hr className="border-[#eef2f2]" />
+
+                <p className="text-[12px] leading-relaxed text-[#9ab0b0]">
+                  By proceeding, you confirm that you have read and agree to our{" "}
+                  <span className="font-semibold text-[#126e6e]">Terms</span> and{" "}
+                  <span className="font-semibold text-[#126e6e]">Privacy Notice.</span>
+                </p>
+
+                <button type="submit"
+                  className="w-full rounded-full bg-[#126e6e] py-3.5 text-[15px] font-bold text-white transition hover:bg-[#0d5252] max-[620px]:py-3 max-[620px]:text-[14px]">
+                  Continue to Schedule
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ── Calendar view (step 2) ── */}
         {step === "calendar" && (
           <div className="flex flex-1 overflow-hidden bg-white max-[620px]:flex-col max-[620px]:overflow-y-auto">
 
             {/* Calendar panel */}
             <div className="flex flex-1 flex-col border-r border-[#f0f4f4] p-7 max-[620px]:border-b max-[620px]:border-r-0 max-[620px]:p-4">
+              <button onClick={() => setStep("form")}
+                className="mb-4 flex cursor-pointer items-center gap-1 text-[13px] font-semibold text-[#555] hover:text-[#126e6e]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Back
+              </button>
               <p className="mb-5 text-[16px] font-bold text-[#0f1f2e] max-[620px]:mb-3 max-[620px]:text-[15px]">Select a Date &amp; Time</p>
 
               {/* Month nav */}
@@ -303,7 +449,7 @@ export function BookingModal() {
                       return (
                         <div key={t} className={isPending ? "max-[620px]:col-span-2" : ""}>
                           <button
-                            disabled={isBooked}
+                            disabled={isBooked || submitting}
                             onClick={() => setPending(isPending ? null : t)}
                             className={`relative w-full rounded-xl border-2 py-2.5 text-[14px] font-semibold transition-all max-[620px]:py-2 max-[620px]:text-[13px]
                               ${isBooked
@@ -319,13 +465,13 @@ export function BookingModal() {
                           </button>
                           {isPending && (
                             <div className="mt-2 flex gap-2">
-                              <button onClick={() => setPending(null)}
-                                className="flex-1 cursor-pointer rounded-xl border border-[#e2e8f0] bg-white py-2 text-[12.5px] font-semibold text-[#666] transition hover:bg-[#f5f5f5]">
+                              <button onClick={() => setPending(null)} disabled={submitting}
+                                className="flex-1 cursor-pointer rounded-xl border border-[#e2e8f0] bg-white py-2 text-[12.5px] font-semibold text-[#666] transition hover:bg-[#f5f5f5] disabled:cursor-not-allowed disabled:opacity-60">
                                 Cancel
                               </button>
-                              <button onClick={() => { setTime(t); setPending(null); setStep("form"); }}
-                                className="flex-1 cursor-pointer rounded-xl bg-[#126e6e] py-2 text-[12.5px] font-bold text-white transition hover:bg-[#0d5252]">
-                                Confirm
+                              <button onClick={() => { setPending(null); confirmBooking(t); }} disabled={submitting}
+                                className="flex-1 cursor-pointer rounded-xl bg-[#126e6e] py-2 text-[12.5px] font-bold text-white transition hover:bg-[#0d5252] disabled:cursor-not-allowed disabled:opacity-60">
+                                {submitting ? "Booking…" : "Confirm"}
                               </button>
                             </div>
                           )}
@@ -333,259 +479,10 @@ export function BookingModal() {
                       );
                     })}
                   </div>
+                  {submitError && (
+                    <p className="mt-4 rounded-lg bg-red-50 px-3 py-2.5 text-[12.5px] font-medium text-red-600">{submitError}</p>
+                  )}
                 </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── Form / Success view ── */}
-        {(step === "form" || step === "success") && (
-          <div className="flex flex-1 overflow-hidden bg-white max-[620px]:flex-col max-[620px]:overflow-y-auto">
-
-            {/* Left — full info panel (desktop) / compact bar (mobile) */}
-
-            {/* Mobile compact top bar — back + time only */}
-            <div className="hidden max-[620px]:flex max-[620px]:flex-none max-[620px]:items-center max-[620px]:justify-between max-[620px]:border-b max-[620px]:border-[#eef2f2] max-[620px]:px-4 max-[620px]:py-3">
-              <button onClick={() => { setStep("calendar"); setTime(null); }}
-                className="flex items-center gap-1.5 cursor-pointer text-[13px] font-semibold text-[#555]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-                Back
-              </button>
-              <div className="flex flex-col items-end text-right">
-                <span className="text-[12px] font-bold text-[#126e6e]">{time} – {END_TIME[time!]}</span>
-                <span className="text-[11px] text-[#9ab8b8]">{selDayS}, {MONTHS_S[month]} {day}</span>
-              </div>
-            </div>
-
-            {/* Desktop left panel */}
-            <div className="flex w-[320px] flex-none flex-col overflow-y-auto border-r border-[#eef2f2] p-8 max-[620px]:hidden">
-              <button onClick={() => { setStep("calendar"); setTime(null); }}
-                className="mb-5 flex cursor-pointer items-center gap-1 text-[13px] font-semibold text-[#555] hover:text-[#126e6e]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-                Back
-              </button>
-              <img
-                src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/Marina-logo_v7lcbn.png"
-                alt="Marina's"
-                className="mb-6 h-14 w-auto object-contain object-left"
-              />
-              <p className="mb-1 text-[12px] font-semibold text-[#7a9898]">Marina&apos;s Hospitals</p>
-              <p className="mb-5 text-[17px] font-bold leading-snug text-[#0f1f2e]">
-                Hernia Consultation<br/>with Dr. Preethi Mrinalini
-              </p>
-              <div className="flex flex-col gap-3.5 text-[13px] text-[#444]">
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 flex-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a9898" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                  <span>30 min</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 flex-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a9898" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                  <span className="font-semibold text-[#1a2332]">
-                    {time} – {END_TIME[time!]}, {selDayName}, {MONTHS[month]} {day}, {year}
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <svg className="mt-0.5 flex-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a9898" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                  <span className="font-semibold text-[#1a2332]">India Standard Time</span>
-                </div>
-              </div>
-              <p className="mt-5 text-[12px] leading-relaxed text-[#9ab8b8]">
-                This consultation will help us understand your hernia symptoms, review your reports, and walk you through your treatment options.
-              </p>
-            </div>
-
-            {/* Right — scrollable form or success */}
-            <div className="flex flex-1 flex-col overflow-y-auto p-10 max-[620px]:p-4">
-
-              {step === "form" && (
-                <>
-                  {/* Logo — mobile only, shown at top of form */}
-                  <img
-                    src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/Marina-logo_v7lcbn.png"
-                    alt="Marina's"
-                    className="mb-4 hidden h-14 w-auto object-contain object-left max-[620px]:block"
-                  />
-                  <p className="mb-5 text-[22px] font-bold text-[#0f1f2e] max-[620px]:mb-4 max-[620px]:text-[18px]">Enter Details</p>
-                  <form className="flex flex-col gap-5 pb-4 max-[620px]:gap-4" onSubmit={async (e) => {
-                      e.preventDefault();
-                      setSubmitting(true);
-                      setSubmitError("");
-                      try {
-                        const res = await fetch("/api/submissions", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            source:          "Hernia-Booking",
-                            firstName:       form.firstName,
-                            lastName:        form.lastName,
-                            email:           form.email,
-                            phone:           form.phone,
-                            location:        form.location,
-                            dateKey:         `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
-                            appointmentDate: `${selDayName}, ${MONTHS[month]} ${day}, ${year}`,
-                            appointmentTime: time,
-                            symptomType,
-                            hadSurgery,
-                            primaryGoal,
-                            decisionMaker,
-                            timeline,
-                            prevConsult,
-                            pageUrl:         window.location.href,
-                          }),
-                        });
-                        if (!res.ok) throw new Error("Submission failed");
-                        router.push("/thank-you");
-                      } catch {
-                        setSubmitError("Something went wrong. Please try again.");
-                        setSubmitting(false);
-                      }
-                    }}>
-
-                    {/* First + Last — stacks on mobile */}
-                    <div className="grid grid-cols-2 gap-3 max-[620px]:grid-cols-1">
-                      <div>
-                        <label className={labelCls}>First name <span className="text-red-400">*</span></label>
-                        <input required value={form.firstName}
-                          onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
-                          className={inputCls} />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Last name <span className="text-red-400">*</span></label>
-                        <input required value={form.lastName}
-                          onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
-                          className={inputCls} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={labelCls}>Email <span className="text-red-400">*</span></label>
-                      <input required type="email" value={form.email}
-                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                        className={inputCls} />
-                    </div>
-
-                    <div>
-                      <label className={labelCls}>Phone Number <span className="text-red-400">*</span></label>
-                      <div className="flex overflow-hidden rounded-lg border border-[#d1dbe8] bg-white transition focus-within:border-[#42c8c8] focus-within:shadow-[0_0_0_2px_rgba(66,200,200,0.2)]">
-                        <div className="flex items-center gap-2 border-r border-[#d1dbe8] px-3 text-[14px] text-[#444]">
-                          <span>🇮🇳</span>
-                          <span className="font-medium">+91</span>
-                        </div>
-                        <input required type="tel" value={form.phone}
-                          onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                          className="flex-1 bg-transparent px-3 py-2.5 text-[14px] text-[#1a2332] outline-none" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={labelCls}>Where are you located? <span className="text-red-400">*</span></label>
-                      <input required placeholder="City, State" value={form.location}
-                        onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
-                        className={inputCls} />
-                    </div>
-
-                    <hr className="border-[#eef2f2]" />
-
-                    <RadioGroup
-                      label="What type of hernia symptom do you have?"
-                      required value={symptomType} onChange={setSymptomType}
-                      options={[
-                        "Abdominal bulge or lump",
-                        "Groin pain or swelling",
-                        "Post-pregnancy bulge (diastasis recti)",
-                        "Post-surgery concern",
-                        "Not sure — need evaluation",
-                      ]}
-                    />
-
-                    <RadioGroup
-                      label="Have you been advised surgery before?"
-                      required value={hadSurgery} onChange={setHadSurgery}
-                      options={[
-                        "Yes — I want a second opinion",
-                        "No — this is my first consultation",
-                        "Currently evaluating options",
-                      ]}
-                    />
-
-                    <RadioGroup
-                      label="What is your primary goal with this consultation?"
-                      required value={primaryGoal} onChange={setPrimaryGoal}
-                      options={[
-                        "Understand my condition clearly",
-                        "Get a second opinion",
-                        "Explore non-surgical treatment",
-                        "Understand surgery risks and recovery",
-                      ]}
-                    />
-
-                    <RadioGroup
-                      label="Are you the decision-maker for treatment?"
-                      required value={decisionMaker} onChange={setDecision}
-                      options={[
-                        "Yes",
-                        "No",
-                        "Need to discuss with family",
-                      ]}
-                    />
-
-                    <RadioGroup
-                      label="How soon are you planning to start treatment?"
-                      required value={timeline} onChange={setTimeline}
-                      options={[
-                        "As soon as possible",
-                        "Within 1 month",
-                        "Within 3 months",
-                        "Just exploring for now",
-                      ]}
-                    />
-
-                    <RadioGroup
-                      label="Have you consulted another doctor for this before?"
-                      required value={prevConsult} onChange={setPrevConsult}
-                      options={[
-                        "Yes — looking for specialist opinion",
-                        "No — this is my first consultation",
-                        "Yes — but reports were inconclusive",
-                      ]}
-                    />
-
-                    <hr className="border-[#eef2f2]" />
-
-                    <p className="text-[12px] leading-relaxed text-[#9ab0b0]">
-                      By proceeding, you confirm that you have read and agree to our{" "}
-                      <span className="font-semibold text-[#126e6e]">Terms</span> and{" "}
-                      <span className="font-semibold text-[#126e6e]">Privacy Notice.</span>
-                    </p>
-
-                    {submitError && (
-                      <p className="rounded-lg bg-red-50 px-4 py-2.5 text-[13px] font-medium text-red-600">{submitError}</p>
-                    )}
-
-                    <button type="submit" disabled={submitting}
-                      className="w-full rounded-full bg-[#126e6e] py-3.5 text-[15px] font-bold text-white transition hover:bg-[#0d5252] disabled:cursor-not-allowed disabled:opacity-60 max-[620px]:py-3 max-[620px]:text-[14px]">
-                      {submitting ? "Submitting…" : "Schedule Event"}
-                    </button>
-                  </form>
-                </>
-              )}
-
-              {step === "success" && (
-                <div className="flex h-full flex-col items-center justify-center py-10 text-center max-[620px]:py-8">
-                  <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-[#e6f5f0]">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#126e6e" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-                  </div>
-                  <p className="mb-1 text-[20px] font-bold text-[#0f1f2e]">You&apos;re scheduled!</p>
-                  <p className="text-[13.5px] text-[#7a9898]">{selDayName}, {MONTHS[month]} {day} · {time} IST</p>
-                  <p className="mt-3 max-w-[30ch] text-[13px] leading-relaxed text-[#aab8b8]">
-                    Dr. Preethi&apos;s team will confirm your slot within 24 hrs.
-                  </p>
-                  <button onClick={() => setOpen(false)}
-                    className="mt-6 rounded-full bg-[#126e6e] px-8 py-3 text-[14px] font-bold text-white transition hover:bg-[#0d5252]">
-                    Done
-                  </button>
-                </div>
               )}
             </div>
           </div>

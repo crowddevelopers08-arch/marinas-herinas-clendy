@@ -384,9 +384,6 @@ export default async function AdminDashboard({
                       />
                       <Field label="Symptom" value={item.symptomType} />
                       <Field label="Surgery advised" value={item.hadSurgery} />
-                      <Field label="Primary goal" value={item.primaryGoal} />
-                      <Field label="Decision maker" value={item.decisionMaker} />
-                      <Field label="Timeline" value={item.timeline} />
                       <Field label="Previous consult" value={item.prevConsult} />
                       <Field label="TeleCRM" value={item.telecrmStatus} />
                       <Field label="Page URL" value={item.pageUrl} wide />

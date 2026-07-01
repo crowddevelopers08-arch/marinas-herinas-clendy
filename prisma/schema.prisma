@@ -21,9 +21,6 @@ model Submission {
   appointmentTime String?
   symptomType     String?
   hadSurgery      String?
-  primaryGoal     String?
-  decisionMaker   String?
-  timeline        String?
   prevConsult     String?
   pageUrl         String?
   telecrmStatus   String?
