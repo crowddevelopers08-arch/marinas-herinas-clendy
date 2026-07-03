@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import SupportNavbar from "@/app/SupportNavbar";
 import Link from "next/link";
 
@@ -11,10 +11,32 @@ declare global {
 }
 
 export default function ThankYouPage() {
+  const hasTrackedSubmitApplication = useRef(false);
+
   useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "SubmitApplication");
-    }
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
+
+    const trackSubmitApplication = () => {
+      if (hasTrackedSubmitApplication.current) return;
+
+      if (window.fbq) {
+        window.fbq("track", "SubmitApplication");
+        hasTrackedSubmitApplication.current = true;
+        return;
+      }
+
+      attempts += 1;
+      if (attempts < 20) {
+        retryTimer = setTimeout(trackSubmitApplication, 100);
+      }
+    };
+
+    trackSubmitApplication();
+
+    return () => {
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   return (
