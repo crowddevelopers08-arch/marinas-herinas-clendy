@@ -6,14 +6,14 @@ import { Reveal } from "./Reveal";
 import { eyebrow, section, sectionTitle, shadowCard, wrap } from "./styles";
 
 const beforeAfterImages = [
-  // {
-  //   src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1782739290/Before_hqlodd.png",
-  //   alt: "Hernia care before and after image 1",
-  // },
-  // {
-  //   src: "https://res.cloudinary.com/dthj7fakc/image/upload/v1782466686/herina-image1_xan4cv.png",
-  //   alt: "Hernia care before and after image 2",
-  // },
+  {
+    src: "/bfaf-8.png",
+    alt: "Hernia care before and after image 1",
+  },
+  {
+    src: "/bfaf.png",
+    alt: "Hernia care before and after image 2",
+  },
   {
     src: "https://res.cloudinary.com/daclbrdse/image/upload/v1782805703/5_vcpte1.png",
     alt: "Hernia care before and after image 3",
