@@ -147,9 +147,9 @@ export function StoriesSection() {
       <div className={wrap}>
         <Reveal>
           <span className={eyebrow}>What Doctor Say</span>
-          <h2 className={sectionTitle}>
+          {/* <h2 className={sectionTitle}>
             Stories From Those Who Chose Change.
-          </h2>
+          </h2> */}
           <div className="relative mt-[34px]">
             {showStoryArrows && (
               <button
