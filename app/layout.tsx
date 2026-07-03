@@ -19,7 +19,20 @@ export const metadata: Metadata = {
   title:
     "Hernia Consultation with Dr. Preethi Mrinalini - Understand Your Condition Before It Worsens",
   description:
-    "A bulge, heaviness, or post-pregnancy bulge that won't go away? Book a detailed hernia and diastasis recti assessment with Dr. Preethi Mrinalini, Advanced Laparoscopic Surgeon. Consultation",
+    "A bulge, heaviness, or post-pregnancy bulge that won't go away? Book a detailed hernia and diastasis recti assessment with Dr. Preethi Mrinalini, Advanced Laparoscopic Surgeon.",
+  icons: {
+    icon: [
+      {
+        url: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+        sizes: "32x32",
+      },
+      {
+        url: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+        sizes: "192x192",
+      },
+    ],
+    apple: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+  },
 };
 
 export default function RootLayout({
@@ -30,37 +43,23 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body>
-        {/* Meta Pixel Code */}
-        <Script
-          id="facebook-pixel"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-              n.queue=[];t=b.createElement(e);t.async=!0;
-              t.src=v;s=b.getElementsByTagName(e)[0];
-              s.parentNode.insertBefore(t,s)}
-              (window, document,'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
+        {/* Meta Pixel */}
+        <Script id="facebook-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}
+            (window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
 
-              fbq('init', '847627428426790');
-              fbq('track', 'PageView');
-            `,
-          }}
-        />
-
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=847627428426790&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
+            fbq('init', '1090728243277557');
+            fbq('track', 'PageView');
+          `}
+        </Script>
 
         {children}
       </body>
