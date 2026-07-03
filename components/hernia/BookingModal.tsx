@@ -21,7 +21,9 @@ const MONTHS = [
 // Monday - Saturday only
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+// Indexed to match Date.prototype.getDay() (0 = Sunday ... 6 = Saturday)
 const DAY_NAMES = [
+  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
