@@ -42,6 +42,11 @@ type TelecrmResponse = Record<string, unknown> & {
   note?: string;
 };
 
+type TelecrmAction = {
+  type: 'SYSTEM_NOTE';
+  text: string;
+};
+
 function toText(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -165,17 +170,7 @@ function isTelecrmConfirmed(data: unknown) {
   return status === 'created' || status === 'updated' || status === 'success';
 }
 
-async function pushToTeleCRM(body: SubmissionBody): Promise<TelecrmResponse | null> {
-  const url = process.env.TELECRM_API_URL;
-  const key = process.env.TELECRM_API_KEY;
-  if (!url || !key) return null;
-
-  const phone = normalizePhoneForTeleCRM(body.phone);
-  if (!phone) return null;
-
-  const controller = new AbortController();
-  const timeout    = setTimeout(() => controller.abort(), 15000);
-
+function buildTelecrmActions(body: SubmissionBody): TelecrmAction[] {
   const fullName = `${body.firstName} ${body.lastName}`.trim();
   const note     = [
     `Source: ${body.source}`,
@@ -188,9 +183,43 @@ async function pushToTeleCRM(body: SubmissionBody): Promise<TelecrmResponse | nu
     `URL: ${body.pageUrl}`,
   ].join(' | ');
 
+  const fieldNotes = [
+    ['Name', fullName],
+    ['Email', body.email],
+    ['Phone Number', body.phone],
+    ['Location', body.location],
+    ['Slot', `${body.appointmentDate} at ${body.appointmentTime}`.trim()],
+    ['Symptom', body.symptomType],
+    ['Surgery advised', body.hadSurgery],
+    ['Prev consult', body.prevConsult],
+    ['Source', body.source],
+    ['Page URL', body.pageUrl],
+  ]
+    .filter(([, value]) => value)
+    .map(([label, value]) => ({
+      type: 'SYSTEM_NOTE' as const,
+      text: `${label}: ${value}`,
+    }));
+
+  return [{ type: 'SYSTEM_NOTE', text: note }, ...fieldNotes];
+}
+
+async function pushToTeleCRM(body: SubmissionBody): Promise<TelecrmResponse | null> {
+  const url = process.env.TELECRM_API_URL;
+  const key = process.env.TELECRM_API_KEY;
+  if (!url || !key) return null;
+
+  const phone = normalizePhoneForTeleCRM(body.phone);
+  if (!phone) return null;
+
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 15000);
+
+  const fullName = `${body.firstName} ${body.lastName}`.trim();
+
   const payload = {
     fields: { phone, name: fullName },
-    actions: [{ type: 'SYSTEM_NOTE', text: note }],
+    actions: buildTelecrmActions(body),
   };
 
   try {
