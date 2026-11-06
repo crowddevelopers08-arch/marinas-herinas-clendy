@@ -5,7 +5,7 @@ import { CheckIcon } from "./Icons";
 import { button, wrap } from "./styles";
 
 const SYMPTOM_VIDEO =
-  "/marinias1_squished.mp4";
+  "/video-2.mp4";
 
 const BG_IMAGES = [
   "/images1.jpg",
