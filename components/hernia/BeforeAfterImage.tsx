@@ -15,7 +15,7 @@ const beforeAfterImages = [
     alt: "Hernia care before and after image 2",
   },
   {
-    src: "https://res.cloudinary.com/daclbrdse/image/upload/v1782805703/5_vcpte1.png",
+    src: "/5.png",
     alt: "Hernia care before and after image 3",
   },
 ];

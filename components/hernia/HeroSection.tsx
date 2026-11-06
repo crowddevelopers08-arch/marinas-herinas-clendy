@@ -5,11 +5,11 @@ import { CheckIcon } from "./Icons";
 import { button, wrap } from "./styles";
 
 const SYMPTOM_VIDEO =
-  "https://res.cloudinary.com/daclbrdse/video/upload/v1782801995/output_1hernia_squished_vmlaw3.mp4";
+  "/marinias1_squished.mp4";
 
 const BG_IMAGES = [
-  "https://ik.imagekit.io/tpucbav8z/images1.jpg",
-  "https://ik.imagekit.io/tpucbav8z/images2.jpg",
+  "/images1.jpg",
+  "/images2.jpg",
 ];
 
 function VideoModal({ onClose }: { onClose: () => void }) {
@@ -149,12 +149,12 @@ export function HeroSection() {
                 your real options are.
               </p>
 
-              <div className="mb-6 flex flex-wrap items-center gap-3 max-[620px]:w-full max-[620px]:flex-col max-[620px]:gap-2.5">
-                <a href="#book" className={`${button} max-[620px]:w-full max-[620px]:justify-center`}>
+              <div className="mb-6 flex flex-wrap items-center gap-3 max-[620px]:w-full max-[620px]:flex-col max-[620px]:items-start max-[620px]:gap-2.5">
+                <a href="#book" className={`${button}`}>
                   Book My Consultation
                 </a>
                 <button
-                  className="inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full border border-[rgba(18,110,110,0.2)] bg-transparent px-6 py-[15px] text-base font-bold text-teal-deep transition-all duration-200 hover:-translate-y-0.5 hover:border-[#126e6e] hover:bg-[#f0fafa] active:translate-y-0 max-[620px]:w-full max-[620px]:py-3 max-[620px]:text-sm"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full border border-[rgba(18,110,110,0.2)] bg-transparent px-6 py-[15px] text-base font-bold text-teal-deep transition-all duration-200 hover:-translate-y-0.5 hover:border-[#126e6e] hover:bg-[#f0fafa] active:translate-y-0 max-[620px]:py-3 max-[620px]:text-sm"
                   onClick={() => setModalOpen(true)}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

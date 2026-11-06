@@ -129,7 +129,7 @@ export function SymptomCheckSection() {
                 <div className="my-5 min-h-[60px] text-[14.5px] font-medium text-[#d5f5f5]">
                   {messages[selected.length]}
                 </div>
-                <a href="#book" className={`${button} w-full`}>
+                <a href="#book" className={`${button}`}>
                   Book My Consultation
                 </a>
                 <div className="mt-3 text-[11.5px] opacity-60">

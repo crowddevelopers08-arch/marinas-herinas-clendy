@@ -10,11 +10,11 @@ const stories = [
   //   caption: "Postpartum weight gain — is it always fat?",
   // },
   {
-    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/A_lot_of_moms_tell_me_the_same_thing____I_still_look_pregnant..._even_years_after_delivery.___And_many_assume_it_s_just_stubborn_fat.__But_sometimes__the_rea_w2fn73.mp4",
+    src: "https://www.instagram.com/reel/DY4QVVOxov9/embed",
     caption: '"I still look pregnant... even years after delivery."',
   },
   {
-    src: "https://res.cloudinary.com/dthj7fakc/video/upload/v1781681467/Most_people_think_every_tummy_bulge_is_fat._But_sometimes__it_could_be_something_entirely_different._A_hernia_is_a_weakness_in_the_abdominal_wall_that_allow_gfuapm.mp4",
+    src: "https://www.instagram.com/reel/DZKXI_YPTdE/embed",
     caption: "Not every tummy bulge is fat — it could be a hernia.",
   },
   // {
@@ -163,21 +163,15 @@ export function StoriesSection() {
             <div className={`flex gap-[18px] overflow-hidden scroll-smooth max-[900px]:gap-4 max-[620px]:max-w-full max-[620px]:snap-x max-[620px]:flex-row max-[620px]:gap-3.5 ${mobileStoryPlaying ? "max-[620px]:overflow-hidden" : "max-[620px]:overflow-x-auto"} max-[620px]:pb-2.5 max-[620px]:[scrollbar-width:none] max-[620px]:[&::-webkit-scrollbar]:hidden ${shouldCenterStories ? "min-[621px]:justify-center" : ""}`} ref={scrollRef} onScroll={handleScroll}>
               {stories.map(({ src }, i) => (
                 <div className={`${shadowSoft} group relative aspect-[9/13] flex-[0_0_calc((100%_-_36px)/3)] cursor-pointer overflow-hidden rounded-[18px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] transition-transform duration-200 hover:-translate-y-1 max-[900px]:flex-[0_0_calc((100%_-_16px)/2)] max-[620px]:flex-[0_0_82%] max-[620px]:snap-start`} key={src}>
-                  <video
-                    ref={(video) => {
-                      storyVideoRefs.current[i] = video;
-                    }}
+                  <iframe
                     src={src}
-                    controls
-                    playsInline
-                    className="absolute inset-0 h-full w-full rounded-[inherit] object-cover"
-                    onPlay={() => handleStoryPlay(i)}
-                    onPause={handleStoryStop}
-                    onEnded={handleStoryStop}
+                    title={`Instagram reel ${i + 1}`}
+                    loading="lazy"
+                    allowFullScreen
+                    scrolling="no"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    className="absolute inset-0 h-full w-full rounded-[inherit] border-0 bg-white"
                   />
-                  <div className="pointer-events-none absolute left-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold text-white backdrop-blur-sm">
-                    {i + 1}
-                  </div>
                 </div>
               ))}
             </div>

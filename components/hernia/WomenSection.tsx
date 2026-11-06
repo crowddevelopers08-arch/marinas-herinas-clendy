@@ -12,7 +12,7 @@ const signs = [
 ];
 
 const image = (
-  <div className="overflow-hidden p-6 text-center text-sm font-semibold leading-normal text-[#a98778] max-[620px]:p-[19px]">
+  <div className="absolute inset-0 overflow-hidden rounded-[inherit] text-center text-sm font-semibold leading-normal text-[#a98778]">
     <img
       src="https://res.cloudinary.com/dxntva1vn/image/upload/v1782744669/hernia_ygipmq.png"
       alt="Women patient"
@@ -28,14 +28,14 @@ export function WomenSection() {
       id="women"
     >
       <div className={wrap}>
-        <Reveal className="grid grid-cols-2 items-center gap-[46px] max-[900px]:grid-cols-1 max-[900px]:gap-[34px]">
+        <Reveal className="grid grid-cols-2 items-stretch gap-[46px] max-[900px]:grid-cols-1 max-[900px]:gap-[34px]">
           {/* Desktop / tablet: image in left column */}
-          <div className={`${softBorder} relative flex aspect-[3.1/4] items-center justify-center overflow-hidden rounded-[22px] bg-[linear-gradient(160deg,#fcefea,#f3e4dc)] max-[900px]:mx-auto max-[900px]:max-w-[460px] max-[620px]:hidden max-[620px]:max-w-full`}>
+          <div className={`${softBorder} relative flex aspect-[3.1/4] items-center justify-center overflow-hidden rounded-[22px] bg-[linear-gradient(160deg,#fcefea,#f3e4dc)] min-[901px]:aspect-auto min-[901px]:min-h-[420px] max-[900px]:mx-auto max-[900px]:max-w-[460px] max-[620px]:hidden max-[620px]:max-w-full`}>
             {image}
           </div>
 
-          <div>
-            <span className="mb-[18px] inline-block rounded-full border-2 border-teal px-3.5 py-[7px] text-[12.5px] font-bold uppercase tracking-[0.05em] text-coral-deep">
+          <div className="flex flex-col justify-center">
+            <span className="mb-[18px] self-start inline-block rounded-full border-2 border-teal px-3.5 py-[7px] text-[12.5px] font-bold uppercase tracking-[0.05em] text-coral-deep">
               For Women
             </span>
             <h2 className={sectionTitle}>It may not just be belly fat.</h2>

@@ -12,8 +12,8 @@ export function DoctorSection() {
     >
       <div className={wrap}>
         <Reveal>
-          <div className="grid items-start gap-8 rounded-[34px] border border-white/10 bg-white/5 p-6 lg:grid-cols-[minmax(0,1fr)_420px] max-[620px]:gap-7 max-[620px]:p-3.5">
-            <div className="relative z-[1] max-w-[680px] py-3 max-[620px]:p-1.5">
+          <div className="grid items-stretch gap-8 rounded-[34px] border border-white/10 bg-white/5 p-6 lg:grid-cols-[minmax(0,1fr)_420px] max-[620px]:gap-7 max-[620px]:p-3.5">
+            <div className="relative z-[1] flex max-w-[680px] flex-col py-3 max-[620px]:p-1.5">
               <span className={`${eyebrow} text-white/75`}>
                 Meet your surgeon
               </span>
@@ -24,7 +24,7 @@ export function DoctorSection() {
                 Advanced Laparoscopic &amp; Hernia Surgeon
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-7 max-[620px]:rounded-[24px] max-[620px]:p-5">
+              <div className="flex flex-1 flex-col justify-center rounded-[30px] border border-white/10 bg-white/5 p-7 max-[620px]:rounded-[24px] max-[620px]:p-5">
                 <p className="text-base leading-[1.8] text-white/75">
                   Over the years, Dr. Preethi Mrinalini has helped patients with
                   hernia and abdominal wall conditions understand their diagnosis
@@ -47,16 +47,16 @@ export function DoctorSection() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[420px] lg:mr-0">
+            <div className="relative mx-auto flex w-full max-w-[420px] lg:mr-0">
               <div className="absolute inset-4 rounded-[34px]  max-[620px]:inset-3" />
               <div
-                className={`${shadowCard} relative overflow-hidden rounded-[34px] border border-white/15 bg-white/10 p-3`}
+                className={`${shadowCard} relative flex w-full flex-col overflow-hidden rounded-[34px] border border-white/15 bg-white/10 p-3`}
               >
-                <div className="aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] max-[900px]:aspect-[4/3] max-[620px]:aspect-[3.1/4]">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] max-[900px]:aspect-[4/3] max-[620px]:aspect-[3.1/4] lg:aspect-auto lg:min-h-[420px] lg:flex-1">
                   <img
-                    src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/dr-preethi-mrinalini_wmgdmk.webp"
+                    src="/doctor-1.png"
                     alt="Dr. Preethi Mrinalini"
-                    className="h-full w-full rounded-[inherit] object-cover object-top"
+                    className="absolute inset-0 h-full w-full rounded-[inherit] object-cover object-top"
                   />
                 </div>
               </div>

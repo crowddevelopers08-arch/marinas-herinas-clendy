@@ -9,7 +9,7 @@ export function Footer() {
           <div className="flex items-center gap-[11px] font-bold">
             <div className="inline-flex items-center rounded-[10px] bg-white px-2.5 py-1.5">
               <Image
-                src="https://res.cloudinary.com/dthj7fakc/image/upload/v1781681953/Marina-logo_v7lcbn.png"
+                src="/logo-marinas.png"
                 alt="Preethi Mrinalini Clinic"
                 width={120}
                 height={48}
@@ -28,7 +28,7 @@ export function Footer() {
             >
               +91 98840 00171
             </a>
-            <a href="#book" className={`${button} px-[22px] py-[11px] text-sm`}>
+            <a href="#book" className={`${button}`}>
               Book Consultation
             </a>
           </div>

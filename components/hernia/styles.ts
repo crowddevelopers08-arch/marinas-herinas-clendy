@@ -12,7 +12,7 @@ export const sectionTitle =
   "max-w-[20ch] font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] text-ink max-[900px]:max-w-full max-[620px]:max-w-full";
 
 export const button =
-  "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full border-0 bg-teal px-[30px] py-[17px] font-body text-base font-bold text-white transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-teal-deep active:translate-y-0 max-[620px]:px-2.5! max-[620px]:py-2.5! max-[620px]:text-xs";
+  "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full border-0 bg-teal px-[22px] py-[10px] font-body text-sm font-bold text-white transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-teal-deep active:translate-y-0 max-[620px]:px-2.5! max-[620px]:py-2.5! max-[620px]:text-xs";
 
 export const ghostButton =
   "border-[1.5px] border-[rgba(22,48,48,0.12)] bg-transparent px-[26px] py-[15px] text-teal-deep hover:border-transparent hover:bg-mist";

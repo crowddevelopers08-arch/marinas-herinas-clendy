@@ -36,7 +36,7 @@ export function FinalCtaSection() {
                 Reserve your consultation with Dr. Preethi Mrinalini and finally understand
                 your condition - before it affects your quality of life.
               </p>
-              <a href="#" className={`${button} w-full`}>
+              <a href="#" className={`${button}`}>
                 Book My Consultation 
               </a>
             </div>

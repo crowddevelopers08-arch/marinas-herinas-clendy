@@ -23,15 +23,15 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+        url: "/Marina-logo.png",
         sizes: "32x32",
       },
       {
-        url: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+        url: "/Marina-logo.png",
         sizes: "192x192",
       },
     ],
-    apple: "https://res.cloudinary.com/dthj7fakc/image/upload/v1781681465/logo-marinas_lm71bk.png",
+    apple: "/Marina-logo.png",
   },
 };
 
