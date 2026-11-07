@@ -7,15 +7,15 @@ import { eyebrow, section, sectionTitle, shadowCard, wrap } from "./styles";
 
 const beforeAfterImages = [
   {
-    src: "/bfaf-8.png",
+    src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027006/bf-7_xy3kyc.png",
     alt: "Hernia care before and after image 1",
   },
   {
-    src: "/bfaf.png",
+    src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027005/bf-6_wg4rar.png",
     alt: "Hernia care before and after image 2",
   },
   {
-    src: "/5.png",
+    src: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/bf-4_ijrzqd.png",
     alt: "Hernia care before and after image 3",
   },
 ];

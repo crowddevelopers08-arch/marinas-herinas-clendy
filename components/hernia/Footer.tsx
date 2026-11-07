@@ -9,7 +9,7 @@ export function Footer() {
           <div className="flex items-center gap-[11px] font-bold">
             <div className="inline-flex items-center rounded-[10px] bg-white px-2.5 py-1.5">
               <Image
-                src="/logo-marinas.png"
+                src="https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/Marina-logo_tjcywr.png"
                 alt="Preethi Mrinalini Clinic"
                 width={120}
                 height={48}

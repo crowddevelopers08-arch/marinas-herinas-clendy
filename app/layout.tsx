@@ -23,15 +23,15 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/Marina-logo.png",
+        url: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/Marina-logo_tjcywr.png",
         sizes: "32x32",
       },
       {
-        url: "/Marina-logo.png",
+        url: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/Marina-logo_tjcywr.png",
         sizes: "192x192",
       },
     ],
-    apple: "/Marina-logo.png",
+    apple: "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/Marina-logo_tjcywr.png",
   },
 };
 
@@ -43,21 +43,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body>
-        {/* Meta Pixel */}
-        <Script id="facebook-pixel" strategy="afterInteractive">
+        {/* Google Tag Manager */}
+        <Script
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-5CK5DZPR"
+          strategy="afterInteractive"
+          async
+        />
+        <Script id="gtm-init" strategy="afterInteractive">
           {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}
-            (window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-
-            fbq('init', '1090728243277557');
-            fbq('track', 'PageView');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
           `}
         </Script>
 

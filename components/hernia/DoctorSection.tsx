@@ -54,7 +54,7 @@ export function DoctorSection() {
               >
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(160deg,#126e6e,#42c8c8)] max-[900px]:aspect-[4/3] max-[620px]:aspect-[3.1/4] lg:aspect-auto lg:min-h-[420px] lg:flex-1">
                   <img
-                    src="/doctor-1.png"
+                    src="https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/doctor-1_c8ms3x.png"
                     alt="Dr. Preethi Mrinalini"
                     className="absolute inset-0 h-full w-full rounded-[inherit] object-cover object-top"
                   />

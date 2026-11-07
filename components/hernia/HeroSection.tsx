@@ -5,11 +5,11 @@ import { CheckIcon } from "./Icons";
 import { button, wrap } from "./styles";
 
 const SYMPTOM_VIDEO =
-  "/video-2.mp4";
+  "https://res.cloudinary.com/dxntva1vn/video/upload/v1794027020/video-2_vlasgw.mp4";
 
 const BG_IMAGES = [
-  "/images1.jpg",
-  "/images2.jpg",
+  "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027153/image-1_altmfq.jpg",
+  "https://res.cloudinary.com/dxntva1vn/image/upload/v1794027265/images2_ulpblv.jpg",
 ];
 
 function VideoModal({ onClose }: { onClose: () => void }) {

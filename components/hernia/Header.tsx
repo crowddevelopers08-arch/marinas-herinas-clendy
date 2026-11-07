@@ -8,7 +8,7 @@ export function Header() {
         <div className={`${wrap} flex items-center justify-between gap-3 py-1.5`}>
           <div className="flex items-center gap-[11px] font-bold">
             <Image
-              src="/Marina-logo.png"
+              src="https://res.cloudinary.com/dxntva1vn/image/upload/v1794027007/Marina-logo_tjcywr.png"
               alt="Preethi Mrinalini Clinic"
               width={104}
               height={42}
